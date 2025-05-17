@@ -30,9 +30,29 @@ class Player(GameSprite):
         if keys_pressed[K_DOWN] and self.rect.y < 630:
             self.rect.y += 10
 
-class Ball(GameSprite):
+class Ball(sprite.Sprite):
+    def __init__(self, player_image, player_x, player_y, speed_x, speed_y, player_x_scale, player_y_scale):
+        super().__init__()
+        self.image = transform.scale(image.load(player_image), (player_x_scale, player_y_scale))
+        self.speed_x = speed_x
+        self.speed_y = speed_y
+        self.rect = self.image.get_rect()
+        self.rect.x = player_x
+        self.rect.y = player_y
+
+    def reset(self):
+        window.blit(self.image, (self.rect.x, self.rect.y))
+
     def update(self):
-        pass
+        self.rect.x += self.speed_x
+        self.rect.y += self.speed_y * -1
+
+        if self.rect.y > 450:
+            self.speed_y = self.speed_y * -1
+
+        if self.rect.y < 0:
+            self.speed_y = self.speed_y * -1
+        
 
 
 '''создание окна'''
@@ -42,9 +62,9 @@ display.set_caption("Ping pong")
 
 '''создание спрайтов игроков, мяча и фона'''
 background = transform.scale(image.load("galaxy.jpg"), (700, 500))
-p1 = Player("p.png", 10, 250, 10, 10, 50)
-p2 = Player("p.png", 680, 250, 10, 10, 50)
-ball = Ball("ball.png", 325, 225, 10, 50, 50)
+p1 = Player("p.png", 10, 250, 10, 10, 200)
+p2 = Player("p.png", 680, 250, 10, 10, 200)
+ball = Ball("ball.png", 325, 225, 3, 3, 50, 50)
 
 
 '''объявление переменных и флажков'''
@@ -65,6 +85,11 @@ while run:
         p2.reset()
         p2.update_2()
 
+        ball.reset()
+        ball.update()
+
+    if sprite.collide_rect(ball, p1) or sprite.collide_rect(ball, p2):
+        ball.speed_x = ball.speed_x * -1
 
     for e in event.get():
         if e.type == QUIT:
