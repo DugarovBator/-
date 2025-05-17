@@ -73,6 +73,9 @@ run = True
 finish = False
 clock = time.Clock()
 
+font.init()
+font1 = font.SysFont('Arial', 36)
+
 '''создание игрового цикла'''
 while run:
     if finish != True:
@@ -88,8 +91,19 @@ while run:
         ball.reset()
         ball.update()
 
+        text_p1_win = font1.render("Игрок 1 выиграл!", 1, (180, 0, 0))
+        text_p2_win = font1.render("Игрок 2 выиграл!", 1, (180, 0, 0))
+    
     if sprite.collide_rect(ball, p1) or sprite.collide_rect(ball, p2):
         ball.speed_x = ball.speed_x * -1
+
+    if ball.rect.x < 0:
+        window.blit(text_p2_win, (250, 250))
+        finish = True
+
+    if ball.rect.x > 700:
+        window.blit(text_p1_win, (250, 250))
+        finish = True
 
     for e in event.get():
         if e.type == QUIT:
